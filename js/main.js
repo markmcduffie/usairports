@@ -1,17 +1,17 @@
 // 1. Create a map object.
 var mymap = L.map('map', {
-    center: [44.13, -119.93],
-    zoom: 7,
+    center: [39.8, -98.58],
+    zoom: 5,
     maxZoom: 10,
     minZoom: 3,
     detectRetina: true});
 
 // 2. Add a base map.
-L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png').addTo(mymap);
+L.tileLayer('http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png').addTo(mymap);
 
 // 3. Add cell towers GeoJSON Data
 // Null variable that will hold cell tower data
-var cellTowers = null;
+var airports = null;
 
 
 // 4. build up a set of colors from colorbrewer's dark2 category
@@ -23,39 +23,30 @@ for (i = 0; i < 9; i++) {
 }
 
 // Get GeoJSON and put on it on the map when it loads
-cellTowers= L.geoJson.ajax("assets/cell_towers.geojson", {
+airports = L.geoJson.ajax("assets/airports.geojson", {
     // assign a function to the onEachFeature parameter of the cellTowers object.
     // Then each (point) feature will bind a popup window.
     // The content of the popup window is the value of `feature.properties.company`
     onEachFeature: function (feature, layer) {
-        layer.bindPopup(feature.properties.company);
+        layer.bindPopup(feature.properties.AIRPT_NAME);
     },
     pointToLayer: function (feature, latlng) {
-        var id = 0;
-        if (feature.properties.company == "New Cingular") { id = 0; }
-        else if (feature.properties.company == "Cellco")  { id = 1; }
-        else if (feature.properties.company == "RCC Minnesota")  { id = 2; }
-        else if (feature.properties.company == "Verizon")  { id = 3; }
-        else if (feature.properties.company == "US Cellular")  { id = 4; }
-        else if (feature.properties.company == "Hood River Cellular")  { id = 5; }
-        else if (feature.properties.company == "Medford Cellular")  { id = 6; }
-        else if (feature.properties.company == "Oregon RSA")  { id = 7; }
-        else { id = 8;} // "Salem Cellular"
-        return L.marker(latlng, {icon: L.divIcon({className: 'fa fa-signal marker-color-' + (id + 1).toString() })});
+        var id = 2;
+        return L.marker(latlng, {icon: L.divIcon({className: 'fa fa-plane marker-color-' + (id).toString() })});
     },
-    attribution: 'Cell Tower Data &copy; Map Cruzin | Oregon counties &copy; Oregon Explorer | Base Map &copy; CartoDB | Made By Bo Zhao'
+    attribution: 'Airports Data &copy; catalog.gov | US Sates &copy; D3 | Base Map &copy; CartoDB | Made By Mark McDuffie'
 }).addTo(mymap);
 
 
 // 6. Set function for color ramp
-colors = chroma.scale('OrRd').colors(5); //colors = chroma.scale('RdPu').colors(5);
+colors = chroma.scale(colors = ['lightyellow','lightgreen']).colors(5); //colors = chroma.scale('RdPu').colors(5);
 
 function setColor(density) {
     var id = 0;
-    if (density > 18) { id = 4; }
-    else if (density > 13 && density <= 18) { id = 3; }
-    else if (density > 10 && density <= 13) { id = 2; }
-    else if (density > 5 &&  density <= 10) { id = 1; }
+    if (density > 20) { id = 4; }
+    else if (density > 16 && density <= 20) { id = 3; }
+    else if (density > 12 && density <= 16) { id = 2; }
+    else if (density > 8 &&  density <= 12) { id = 1; }
     else  { id = 0; }
     return colors[id];
 }
@@ -64,7 +55,7 @@ function setColor(density) {
 // 7. Set style function that sets fill color.md property equal to cell tower density
 function style(feature) {
     return {
-        fillColor: setColor(feature.properties.CT_CNT),
+        fillColor: setColor(feature.properties.count),
         fillOpacity: 0.4,
         weight: 2,
         opacity: 1,
@@ -73,10 +64,10 @@ function style(feature) {
     };
 }
 
-// 8. Add county polygons
+// 8. Add
 // create counties variable, and assign null to it.
 var counties = null;
-counties = L.geoJson.ajax("assets/counties.geojson", {
+counties = L.geoJson.ajax("assets/us-states.geojson", {
     style: style
 }).addTo(mymap);
 
@@ -89,22 +80,14 @@ legend.onAdd = function () {
 
     // Create Div Element and Populate it with HTML
     var div = L.DomUtil.create('div', 'legend');
-    div.innerHTML += '<b># Cell Tower</b><br />';
-    div.innerHTML += '<i style="background: ' + colors[4] + '; opacity: 0.5"></i><p>19+</p>';
-    div.innerHTML += '<i style="background: ' + colors[3] + '; opacity: 0.5"></i><p>14-18</p>';
-    div.innerHTML += '<i style="background: ' + colors[2] + '; opacity: 0.5"></i><p>11-13</p>';
-    div.innerHTML += '<i style="background: ' + colors[1] + '; opacity: 0.5"></i><p> 6-10</p>';
-    div.innerHTML += '<i style="background: ' + colors[0] + '; opacity: 0.5"></i><p> 0- 5</p>';
-    div.innerHTML += '<hr><b>Company<b><br />';
-    div.innerHTML += '<i class="fa fa-signal marker-color-1"></i><p> New Cingular</p>';
-    div.innerHTML += '<i class="fa fa-signal marker-color-2"></i><p> Cello</p>';
-    div.innerHTML += '<i class="fa fa-signal marker-color-3"></i><p> RCC Minnesota</p>';
-    div.innerHTML += '<i class="fa fa-signal marker-color-4"></i><p> Verizon</p>';
-    div.innerHTML += '<i class="fa fa-signal marker-color-5"></i><p> US Cellular</p>';
-    div.innerHTML += '<i class="fa fa-signal marker-color-6"></i><p> Hood River Cellular</p>';
-    div.innerHTML += '<i class="fa fa-signal marker-color-7"></i><p> Medford Cellular</p>';
-    div.innerHTML += '<i class="fa fa-signal marker-color-8"></i><p> Oregon RSA</p>';
-    div.innerHTML += '<i class="fa fa-signal marker-color-9"></i><p> Salem Cellular</p>';
+    div.innerHTML += '<b>Number of Airports</b><br />';
+    div.innerHTML += '<i style="background: ' + colors[4] + '; opacity: 0.5"></i><p>20+</p>';
+    div.innerHTML += '<i style="background: ' + colors[3] + '; opacity: 0.5"></i><p>17-20</p>';
+    div.innerHTML += '<i style="background: ' + colors[2] + '; opacity: 0.5"></i><p>13-16</p>';
+    div.innerHTML += '<i style="background: ' + colors[1] + '; opacity: 0.5"></i><p> 9-12</p>';
+    div.innerHTML += '<i style="background: ' + colors[0] + '; opacity: 0.5"></i><p> 0- 8</p>';
+    div.innerHTML += '<hr><b>Most: California (59) <b><br />';
+    div.innerHTML += '<hr><b>Least: Delaware/Rhode Island (2) <b><br />';
     // Return the Legend div containing the HTML content
     return div;
 };
