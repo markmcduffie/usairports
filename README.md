@@ -1,7 +1,9 @@
 # US Airports webmap
+Site published at:
+https://markmcduffie.github.io/usairports/
 Leaflet web map of all US airports:
 
-- First I want to acknowledge the data sources, trhe US government catalog
+- First I want to acknowledge the data sources, the US government catalog
 with airport locations, and Mike Bostock from D3 with the state boundaries.
 
 - The libraries I found most helpful when making the map were chroma.js for
